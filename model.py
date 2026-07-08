@@ -25,10 +25,6 @@ def train_regression_model(X_train: ArrayLike, y_train: ArrayLike) -> LinearRegr
 
     """
 
-    # TODO: your code here
-
-
-    # my code!!!!!!!!!1
     model = LinearRegression()
     model.fit(X_train, y_train)
 
@@ -46,11 +42,7 @@ def save_regression_model(model: LinearRegression, filename: str = "linear_regre
         filename (str): Name of the file that is used to store the model.
 
     """
-    
-    # TODO: your code here
     dump(model, filename)
-
-
 
 
 def evaluate_regression_model(model: LinearRegression, X_test: ArrayLike, y_test: ArrayLike):
@@ -67,9 +59,6 @@ def evaluate_regression_model(model: LinearRegression, X_test: ArrayLike, y_test
         y_test (array-like): Validation target values.
 
     """
-    
-    # TODO: your code here
-
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
 
@@ -90,7 +79,6 @@ def save_initial_datasets(X: ArrayLike, y: ArrayLike):
     X_filename = "X.joblib"
     y_filename = "y.joblib"
     
-    # TODO: your code here
     dump(X, X_filename)
     dump(y, y_filename)
 

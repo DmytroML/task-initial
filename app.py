@@ -21,7 +21,11 @@ def load_and_predict(X: ArrayLike, filename: str = "linear_regression_model.jobl
         np.ndarray: Predicted value.
     """
     
-    # TODO: your code here
+# Завантажуємо збережену модель з файлу
+    model = load(filename)
+    
+    # Робимо передбачення на основі вхідних даних X
+    y = model.predict(X)
 
     return y
 
@@ -48,17 +52,18 @@ def create_streamlit_app():
     # TODO: your code here
 
     # Streamlit app title
-
+    st.title("Linear Regression Predictor")
     # User input for new prediction using a slider
-
+    input_feature = st.slider("Select input feature value:", min_value=-3.0, max_value=3.0, value=0.0, step=0.1)
     # Button to make a prediction
-
+    if st.button("Predict value"):
         # 1. Call load_and_predict functions.
         # Make sure you convert the input_feature to a matrix before calling load_and_predict, e.g., load_and_predict([[input_feature]])
-
+        prediction = load_and_predict([[input_feature]])
         # 2. Display the prediction.
-
+        st.success(f"The predicted value is: {prediction[0]:.4f}")
         # 4. Call visualize_difference to display a plot visualizing the difference between actual and perdicted value.
+        visualize_difference(input_feature, prediction)
 
 def visualize_difference(input_feature: float, prediction: ArrayLike):
     """
@@ -84,38 +89,53 @@ def visualize_difference(input_feature: float, prediction: ArrayLike):
 
     actual_target = y[_index_of_closest(X, input_feature)]
 
-    # Calculate difference
-    difference = actual_target - prediction
 
+
+
+    pred_val = prediction[0] if hasattr(prediction, "__len__") else prediction
+    act_val = actual_target[0] if hasattr(actual_target, "__len__") else actual_target
+    # Calculate difference
+    #difference = actual_target - prediction
+    difference = act_val - pred_val
     # Visualization
     fig = plt.figure(figsize=(6,4))
-    # TODO: your code here
+
 
     # Plot the entire dataset (X, y) as grey dots to visualize the data distribution.
     # plt.scatter....
-
+    plt.scatter(X, y, color='grey', alpha=0.5, label='Dataset')
     # Plot the actual target value for a specific input feature as a blue dot.
     # plt.scatter...
-
+    plt.scatter(input_feature, act_val, color='blue', zorder=5, label='Actual Target')
     # Plot the predicted target value for the same input feature as a red dot.
     # plt.scatter...
-
+    plt.scatter(input_feature, pred_val, color='red', zorder=5, label='Predicted Target')
     # Display a legend on the plot to label the different scatter points (dataset, actual target, predicted target).
-
+    plt.legend()
     # Set the title of the plot, describing what is being visualized.
-
+    plt.title('Actual vs Predicted Target Value')
     # Set the label for the x-axis to 'Feature', indicating that the x-axis represents the input features.
-
+    plt.xlabel('Feature')
     # Set the label for the y-axis to 'Target', indicating that the y-axis represents the target values (actual or predicted).
-
+    plt.ylabel('Target')
     # Enable a grid on the plot to improve readability.
-
+    plt.grid(True, linestyle='--', alpha=0.7)
     # Draw a dashed line ('k--' for black dashed line) between the actual and predicted target values to visually represent the difference.
     # plt.plot...
-
+    #plt.plot([input_feature, input_feature], [actual_target, prediction], 'k--', label='Difference')
+    plt.plot([input_feature, input_feature], [act_val, pred_val], 'k--', label='Difference')
     # Annotate the plot with the difference between the actual and predicted target values, positioned halfway between them and offset slightly for visibility.
     # plt.annotate...
-
+    #mid_y = (actual_target + prediction) / 2
+    mid_y = (act_val + pred_val) / 2
+    plt.annotate(
+            f'Diff: {difference:.2f}', 
+            xy=(input_feature, mid_y), 
+            xytext=(input_feature + 0.2, mid_y),
+            arrowprops=dict(arrowstyle="->", color='black'),
+            fontsize=10,
+            bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", lw=1)
+        )
     st.pyplot(fig)
 
 # This is a helper function. No need to edit it
